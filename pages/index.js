@@ -1,31 +1,30 @@
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
+import useSWR from 'swr';
+import ArtPieces from '../components/ArtPieces';
+import Spotlight from '../components/Spotlight';
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
+
+function getRandomArtPiece(pieces) {
+  const randomIndex = Math.floor(Math.random() * pieces.length);
+  return pieces[randomIndex];
+}
 
 export default function HomePage() {
-  const [artPieces, setArtPieces] = useState([]);
+  // Fetch art pieces using SWR
+  const { data: artPieces, error } = useSWR('https://example-apis.vercel.app/api/art', fetcher);
 
-  useEffect(() => {
-    const fetchArt = async () => {
-      const response = await fetch('https://example-apis.vercel.app/api/art');
-      const data = await response.json();
-      setArtPieces(data);
-    };
+  if (error) return <div>Failed to load art pieces</div>;
+  if (!artPieces) return <div>Loading...</div>;
 
-    fetchArt();
-  }, []);
+   // Pick a random art piece for spotlight
+   const spotlightPiece = getRandomArtPiece(artPieces);
 
   return (
     <div>
       <h1>Art Gallery</h1>
-      <div className="gallery">
-        {artPieces.map(art => (
-          <div key={art.id}>
-            <Image src={art.imageSource} alt={art.name} width={300} height={300} />
-            <h2>{art.name}</h2>
-            <p>{art.artist}</p>
-          </div>
-        ))}
-      </div>
+
+      <Spotlight image={spotlightPiece.imageSource} artist={spotlightPiece.artist} />
+      <ArtPieces pieces={artPieces} />
     </div>
   );
-};
+}
