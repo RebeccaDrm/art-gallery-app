@@ -17,3 +17,9 @@ You can use the following commands:
 - `npm run start` to start a production server
 - `npm run test` to run the tests
 - `npm run lint` to run the linter
+
+
+### Vercel
+
+To see the Live Version of the App, follow this [link](https://art-gallery-app-sepia-theta.vercel.app/).
+
